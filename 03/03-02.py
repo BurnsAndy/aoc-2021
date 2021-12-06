@@ -1,54 +1,47 @@
-inputFile = 'test-input.txt'
-oxygenList = []
-CO2List = []
+inputFile = 'input.txt'
 numberOfRatings = 0
-O2BitCounter = []
-CO2BitCounter = []
-O2Key = []
-CO2Key = []
+masterList = []
+O2List = []
+CO2List = []
 
 for line in open(inputFile, 'r').readlines():
     numberOfRatings += 1
+    masterList.append(line.strip())
+    O2List.append(line.strip())
+    CO2List.append(line.strip())
 
-    if O2BitCounter == []:
-        O2BitCounter = [0] * len(line)
+bitIndex = 0
+while len(O2List) > 1:
+    bitCounter = 0
+    for rating in O2List:
+        if(rating[bitIndex] == "1"):
+            bitCounter += 1
 
-    if CO2BitCounter == []:
-        CO2BitCounter = [0] * len(line)
-
-    bitIndex = 0
-    for bit in line.strip():
-        if (bit == '1'):
-            O2BitCounter[bitIndex] += 1
-        if (bit == '0'):
-            CO2BitCounter[bitIndex] += 1
-        bitIndex += 1
-
-    oxygenList.append(line)
-    CO2List.append(line)
-
-for bitCount in O2BitCounter:
-    if bitCount >= (numberOfRatings / 2):
-        O2Key.append('1')
+    if bitCounter >= len(O2List)/2:
+        bitKey = "1"
     else:
-        O2Key.append('0')
+        bitKey = "0"
 
-for bitCount in CO2BitCounter:
-    if bitCount >= (numberOfRatings / 2):
-        CO2Key.append('0')
+    O2List[:] = [x for x in O2List if x[bitIndex] == bitKey]
+
+    bitIndex += 1
+
+bitIndex = 0
+while len(CO2List) > 1:
+    bitCounter = 0
+    for rating in CO2List:
+        if(rating[bitIndex] == "1"):
+            bitCounter += 1
+
+    if bitCounter < len(CO2List)/2:
+        bitKey = "1"
     else:
-        CO2Key.append('1')
+        bitKey = "0"
 
-for rating in oxygenList:
-    removeRating = False
 
-    bitIndex = 0
-    for bit in rating:
-        if bit != O2Key[bitIndex]:
-            removeRating = True
-        bitIndex += 1
+    CO2List[:] = [x for x in CO2List if x[bitIndex] == bitKey]
+    bitIndex += 1
 
-    if removeRating and len(oxygenList) > 1:
-        oxygenList.remove(rating)
-print(O2Key)
-print(oxygenList)
+print("O2:  ", O2List[0])
+print("CO2: ", CO2List[0])
+print(int(O2List[0], 2) * int(CO2List[0], 2))
