@@ -3,6 +3,7 @@ from copy import deepcopy
 class Board:
     def __init__(self, rows):
         self.rows = rows
+        self.won = False
 
     def __str__(self):
         printStr = ""
@@ -46,7 +47,8 @@ class Board:
         score = self.checkForHorizontalBingo()
         if score == 0:
             score = self.checkForVerticalBingo()
-
+        if score != 0:
+            self.won = True
         return score
 
 class Row:
@@ -104,12 +106,15 @@ for row in boardRows:
 
 
 score = 0
+winningBoards = deepcopy(boards)
+finalOutput = ""
 for num in drawNumbers:
     for board in boards:
         board.markNumber(num)
         score = board.checkForBingo()
-        if score != 0:
-            print("That's a bingo: ", score, " * ", num, " = ", (int(score) * int(num)))
-            break
-    if score != 0:
-        break
+        winningBoards[:] = [x for x in boards if x.won]
+        if score != 0 and len(winningBoards) == len(boards):
+            if finalOutput == "":
+                finalOutput = "That's a bingo: " + str(score) + " * " + num + " = " + str(int(score) * int(num))
+
+print(finalOutput)
